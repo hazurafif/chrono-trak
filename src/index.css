@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-neo-mint: #4ade80;
+  --color-neo-blue: #60a5fa;
+  --color-neo-yellow: #facc15;
+  --color-neo-coral: #fb7185;
+  --color-neo-purple: #c084fc;
+  --color-neo-orange: #fb923c;
+  --color-neo-white: #ffffff;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #F4F2EE;
+    color: #1A1A1A;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom Neobrutalist shadows and transitions */
+.neo-border {
+  border: 3px solid #1A1A1A;
+}
+
+.neo-border-sm {
+  border: 2px solid #1A1A1A;
+}
+
+.neo-shadow {
+  box-shadow: 4px 4px 0px 0px #1A1A1A;
+}
+
+.neo-shadow-lg {
+  box-shadow: 8px 8px 0px 0px #1A1A1A;
+}
+
+.neo-shadow-sm {
+  box-shadow: 2px 2px 0px 0px #1A1A1A;
+}
+
+/* Bouncy press state */
+.neo-btn-press {
+  transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.neo-btn-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #1A1A1A;
+}
+
+.neo-btn-press-lg:active {
+  transform: translate(4px, 4px);
+  box-shadow: 4px 4px 0px 0px #1A1A1A;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F2EE;
+  border-left: 3px solid #1A1A1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A1A1A;
+  border: 2px solid #F4F2EE;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px) rotate(-0.5deg); }
+  40%, 80% { transform: translateX(4px) rotate(0.5deg); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+

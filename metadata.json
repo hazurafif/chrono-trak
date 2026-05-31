@@ -1,0 +1,6 @@
+{
+  "name": "ChronoTrak",
+  "description": "A slick, high-contrast neobrutalist event tracker showing exactly how much time has passed in years, months, days, and real-time seconds since your life milestones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

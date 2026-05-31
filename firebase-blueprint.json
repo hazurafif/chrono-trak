@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "Milestone": {
+      "title": "Milestone",
+      "description": "A tracked life milestone or dynamic routines/gym goals event",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the milestone"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp when the milestone occurs/occurred"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Lucide icon name"
+        },
+        "color": {
+          "type": "string",
+          "enum": ["neo-mint", "neo-blue", "neo-yellow", "neo-coral", "neo-purple", "neo-orange", "neo-white"],
+          "description": "Visual neobrutalism color theme variant"
+        },
+        "category": {
+          "type": "string",
+          "description": "Category tag e.g. Work, Gym, Personal"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional detailed notes"
+        },
+        "isPinned": {
+          "type": "boolean",
+          "description": "True if pinned to top"
+        },
+        "unitPreference": {
+          "type": "string",
+          "enum": ["detailed", "days", "hours", "seconds"],
+          "description": "User preference layout for visual ticks"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "Optional conclusion or freeze end date"
+        },
+        "subMilestones": {
+          "type": "array",
+          "description": "List of sub-milestones / achievements tracked within this timer"
+        },
+        "moments": {
+          "type": "array",
+          "description": "List of photo snapshots and diary entries along the way"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Owner user UID"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Database insertion timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Database update timestamp"
+        }
+      },
+      "required": ["title", "startDate", "icon", "color", "category", "isPinned", "userId", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}/milestones/{milestoneId}": {
+      "schema": "Milestone",
+      "description": "Collection of milestones owned by each specific user in isolation"
+    }
+  }
+}

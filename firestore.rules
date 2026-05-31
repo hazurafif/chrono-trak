@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Default-Deny Catch-All Security
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 3. Global Hardened Identity & Validation Helpers
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function incoming() { 
+      return request.resource.data; 
+    }
+    
+    function existing() { 
+      return resource.data; 
+    }
+    
+    function isSignedIn() { 
+      return request.auth != null; 
+    }
+    
+    // Mandate Google Sign-In with verified emails by default
+    function isVerifiedUser() { 
+      return isSignedIn() && request.auth.token.email_verified == true; 
+    }
+    
+    // Owner verification corresponding to user database path
+    function isOwner(userId) { 
+      return isVerifiedUser() && request.auth.uid == userId; 
+    }
+
+    // Validation helper representing the precise data blueprint schema (The "Anti-Update-Gap")
+    function isValidMilestone(data) {
+      return data.title is string && data.title.size() > 0 && data.title.size() <= 150
+          && data.startDate is string && data.startDate.size() <= 100
+          && data.icon is string && data.icon.size() <= 50
+          && data.color is string && data.color.size() <= 30 && data.color in ['neo-mint', 'neo-blue', 'neo-yellow', 'neo-coral', 'neo-purple', 'neo-orange', 'neo-white']
+          && data.category is string && data.category.size() > 0 && data.category.size() <= 50
+          && (!data.keys().hasAny(['description']) || (data.description is string && data.description.size() <= 500))
+          && data.isPinned is bool
+          && (!data.keys().hasAny(['unitPreference']) || (data.unitPreference is string && data.unitPreference in ['detailed', 'days', 'hours', 'seconds']))
+          && (!data.keys().hasAny(['endDate']) || data.endDate == null || data.endDate is string)
+          && (!data.keys().hasAny(['subMilestones']) || data.subMilestones is list)
+          && (!data.keys().hasAny(['moments']) || data.moments is list)
+          && data.userId is string && data.userId == request.auth.uid
+          && data.createdAt is timestamp
+          && data.updatedAt is timestamp;
+    }
+
+    // 2. Collection Route Enforcing Owner Separation
+    match /users/{userId}/milestones/{milestoneId} {
+      allow get: if isOwner(userId) && isValidId(milestoneId);
+      
+      // Implicit secure listing prevents query injection / leakage (Hiding Client-side Query Filtering Trust)
+      allow list: if isOwner(userId);
+      
+      allow create: if isOwner(userId) && isValidId(milestoneId)
+                    && isValidMilestone(incoming()) 
+                    && incoming().createdAt == request.time 
+                    && incoming().updatedAt == request.time;
+                    
+      // Partitions updates into secure actions with exact diff checks (Tiered Identity Logic)
+      allow update: if isOwner(userId) && isValidId(milestoneId) 
+                    && isValidMilestone(incoming()) 
+                    && incoming().createdAt == existing().createdAt
+                    && incoming().updatedAt == request.time
+                    && incoming().userId == existing().userId
+                    && (
+                      // Action: Edit/Configure Tracker Content & Toggle Pin State
+                      incoming().diff(existing()).affectedKeys().hasOnly([
+                        'title', 'startDate', 'icon', 'color', 'category', 'description', 
+                        'unitPreference', 'isPinned', 'endDate', 'subMilestones', 'moments', 'updatedAt'
+                      ])
+                    );
+                    
+      allow delete: if isOwner(userId) && isValidId(milestoneId);
+    }
+  }
+}
