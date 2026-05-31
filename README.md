@@ -13,9 +13,6 @@ ChronoTrak is built with a bold, distinctive **neobrutalist retro design languag
 
 ### 📱 Responsive Mobile View
 ![ChronoTrak Mobile View](./screenshots/mobile.png)
-
-> 💡 **Setup Tip**: To see your real screenshots above in GitHub or any markdown viewer, simply download the images you uploaded in our chat, name them `desktop.png` and `mobile.png`, and place them inside the `/screenshots/` folder.
-
 ---
 
 ## 🚀 Key Features & Functionality
